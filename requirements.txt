@@ -24,3 +24,4 @@ azure-storage-file-datalake==12.16.0
 azure-monitor-ingestion==1.0.4
 azure-monitor-opentelemetry-exporter==1.0.0b27
 dbl-tempo==0.1.27
+datasets==3.0.1
