@@ -1,0 +1,14 @@
+openai==1.51.2
+azure-ai-documentintelligence==1.0.0b4
+azure-identity==1.19.0 
+azure-search-documents==11.6.0b9
+azure-storage-blob==12.23.1
+gradio==4.43.0
+azure-cosmos==4.7.0
+llama-parse==0.4.9
+llama-index-core==0.10.65
+azure-monitor-ingestion==1.0.4
+azure-monitor-opentelemetry-exporter==1.0.0b27
+azure-keyvault-secrets==4.7.0
+azure-storage-file-datalake==12.17.0
+azure-storage-blob==12.23.1
