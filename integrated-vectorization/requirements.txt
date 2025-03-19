@@ -15,3 +15,9 @@ azure-storage-blob==12.23.1
 langgraph-supervisor==0.0.9
 langchain-openai==0.3.8
 langgraph==0.3.9
+langgraph-checkpoint-cosmosdb==0.2.3
+langchain-sqlserver==0.1.1
+langgraph-checkpoint-postgres==2.0.18
+psycopg2==2.9.10
+psycopg==3.2.6
+azure-mgmt-postgresqlflexibleservers==1.0.0
