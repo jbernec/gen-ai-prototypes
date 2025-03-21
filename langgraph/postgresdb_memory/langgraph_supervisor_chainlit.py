@@ -16,6 +16,8 @@ import psycopg
 from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
 import chainlit as cl
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, AIMessageChunk
+import time
+from langgraph.checkpoint.memory import MemorySaver
 
 try:
     keyVaultName = os.environ["KEY_VAULT_NAME"]
@@ -141,19 +143,68 @@ def setup_checkpointer_table(checkpointer):
         print("Error: Table 'checkpoints' does not exist. Setting up...")
         checkpointer.setup()
 
-# Create a direct connection
-conn = psycopg.connect(conn_string)
+# # Create a direct connection
+# conn = psycopg.connect(conn_string)
 
-# Create PostgresSaver instance directly
-checkpointer = PostgresSaver(conn)
+# # Create PostgresSaver instance directly
+# checkpointer = PostgresSaver(conn)
 
-setup_checkpointer_table(checkpointer)
+# setup_checkpointer_table(checkpointer)
+
+# Function to get connection with retry logic
+def get_postgres_connection(max_retries=3, retry_delay=2):
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            # Add connect_timeout parameter
+            conn_string_with_timeout = f"{conn_string}&connect_timeout=10"
+            print(f"Attempting database connection (attempt {retry_count + 1}/{max_retries})...")
+            return psycopg.connect(conn_string_with_timeout)
+        except psycopg.Error as e:
+            retry_count += 1
+            print(f"Connection error: {str(e)}")
+            if retry_count < max_retries:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay *= 1.5  # Exponential backoff
+            else:
+                print("Max retries reached. Could not connect to PostgreSQL.")
+                return None
+
+# Try to connect with retries
+conn = get_postgres_connection()
+
+# Create checkpointer with fallback to memory if connection fails
+if conn:
+    print("Successfully connected to PostgreSQL database.")
+    checkpointer = PostgresSaver(conn)
+    try:
+        setup_checkpointer_table(checkpointer)
+    except Exception as e:
+        print(f"Error setting up checkpointer table: {str(e)}")
+        print("Using in-memory checkpointer instead.")
+        checkpointer = MemorySaver()
+else:
+    print("Using in-memory checkpointer for this session.")
+    checkpointer = MemorySaver()
+
+# # Ensure the connection is active before using it
+# def ensure_connection(checkpointer):
+#     if checkpointer.conn.closed:
+#         print("Reconnecting to the database...")
+#         checkpointer.conn = psycopg.connect(conn_string)
 
 # Ensure the connection is active before using it
 def ensure_connection(checkpointer):
-    if checkpointer.conn.closed:
-        print("Reconnecting to the database...")
-        checkpointer.conn = psycopg.connect(conn_string)
+    if isinstance(checkpointer, PostgresSaver):
+        if checkpointer.conn.closed:
+            print("Reconnecting to the database...")
+            new_conn = get_postgres_connection()
+            if new_conn:
+                checkpointer.conn = new_conn
+            else:
+                print("WARNING: Could not reconnect to database")
+    # If using MemorySaver, no connection needs to be maintained
 
 model = AzureChatOpenAI(
     model="gpt-4o", 
@@ -174,36 +225,147 @@ supervisor = create_supervisor(
     agents=[research_graph],
     model=model,
     prompt=(
-        "You are a team supervisor managing a search expert."
-        "Use the research_agent only to respond."
+        "You are a team supervisor managing a search expert agent. Analyze the user input and delegate to the appropriate agent:\n"
+        "Use the research_agent only to respond.\n"
+        "If the user asks a question, respond with the answer from the research agent.\n"
+        "If the user asks for a summary, respond with the summary from the research agent.\n"
+        "If the user asks for a definition, respond with the definition from the research agent.\n"
+        "Do not respond with any other information.\n"
     )
 )
 
 # Compile and run the workflow
+####
 graph = supervisor.compile(checkpointer=checkpointer)
-#ensure_connection(checkpointer)  # Ensure the connection is active
-config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
-
-@cl.on_chat_resume
-async def on_chat_resume(thread):
-    pass
 
 @cl.on_message
 async def main(message: cl.Message):
     ensure_connection(checkpointer)  # Ensure the connection is active
-    answer = cl.Message(content="")
-    await answer.send()
+    
+    # Create messages for each agent
+    supervisor_msg = cl.Message(
+    author="👨‍💼 Supervisor", 
+    content="Analyzing your request...",
+    elements=[cl.Image(url="https://img.icons8.com/color/48/000000/manager.png")]
+)
+    await supervisor_msg.send()
+    
+    research_msg = cl.Message(
+    author="🔍 Research Agent",
+    content="",
+    elements=[cl.Image(url="https://img.icons8.com/color/48/000000/search.png")]
+)
+    
+    # Show thinking indicator
+    thinking = cl.Text(content="🔍 Processing your request...", name="thinking")
+    await thinking.send(for_id=message.id)
+    
+    try:
+        config = {"configurable": {"thread_id": "1"}}
+        
+        for chunk in graph.stream(
+            {"messages": [HumanMessage(content=message.content)]},
+            config,
+            stream_mode="values",
+        ):
+            # Print for debugging
+            print(f"Received chunk: {chunk}")
+            
+            # Extract step name and messages
+            step_name = chunk.get("step_name", "")
+            messages = chunk.get("messages", [])
+            
+            if messages and len(messages) > 0:
+                last_message = messages[-1]
+                
+                # Handle supervisor messages
+                if "supervisor" in step_name and isinstance(last_message, (AIMessage, AIMessageChunk)):
+                    supervisor_msg.content = last_message.content
+                    await supervisor_msg.update()
+                
+                # Handle research agent messages
+                elif "search_expert" in step_name and isinstance(last_message, (AIMessage, AIMessageChunk)):
+                    research_msg.content = last_message.content
+                    # Only send if it has content
+                    if not research_msg.sent and research_msg.content.strip():
+                        await research_msg.send()
+                    elif research_msg.sent:
+                        await research_msg.update()
+    
+    except Exception as e:
+        error_msg = f"Error: {str(e)}"
+        print(error_msg)
+        supervisor_msg.content = error_msg
+        await supervisor_msg.update()
+    finally:
+        await thinking.remove()
 
-    config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
+###
+# @cl.on_message
+# async def main(message: cl.Message):
+#     ensure_connection(checkpointer)  # Ensure the connection is active
+    
+#     # Create a single response message
+#     response = cl.Message(content="")
+#     await response.send()
+    
+#     # Show thinking indicator
+#     thinking = cl.Text(content="🔍 Processing your request...", name="thinking")
+#     await thinking.send(for_id=message.id)
+    
+#     try:
+#         config = {"configurable": {"thread_id": "1"}}
+        
+#         # Switch to values mode which provides more consistent structure
+#         for chunk in graph.stream(
+#             {"messages": [HumanMessage(content=message.content)]},
+#             config,
+#             stream_mode="values",
+#         ):
+#             # Print chunk structure to console for debugging
+#             print(f"Received chunk: {chunk}")
+            
+#             # Extract messages from values structure
+#             if "messages" in chunk and chunk["messages"]:
+#                 messages = chunk["messages"]
+#                 # Get the last message in the list
+#                 last_message = messages[-1]
+#                 if isinstance(last_message, (AIMessage, AIMessageChunk)):
+#                     response.content = last_message.content
+#                     await response.update()
+#     except Exception as e:
+#         # Display any errors to help with debugging
+#         error_msg = f"Error: {str(e)}"
+#         print(error_msg)  # Log to console
+#         response.content = error_msg
+#         await response.update()
+#     finally:
+#         # Always remove the thinking indicator
+#         await thinking.remove()
+####
+# #ensure_connection(checkpointer)  # Ensure the connection is active
+# config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
 
-    for msg, _ in graph.stream(
-        {"messages": [HumanMessage(content=message.content)]},
-        config,
-        stream_mode="messages",
-    ):
-        if isinstance(msg, AIMessageChunk):
-            answer.content += msg.content  # type: ignore
-            await answer.update()
+# @cl.on_chat_resume
+# async def on_chat_resume(thread):
+#     pass
+
+# @cl.on_message
+# async def main(message: cl.Message):
+#     ensure_connection(checkpointer)  # Ensure the connection is active
+#     answer = cl.Message(content="")
+#     await answer.send()
+
+#     config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
+
+#     for msg, _ in graph.stream(
+#         {"messages": [HumanMessage(content=message.content)]},
+#         config,
+#         stream_mode="messages",
+#     ):
+#         if isinstance(msg, AIMessageChunk):
+#             answer.content += msg.content  # type: ignore
+#             await answer.update()
 
 # while True:
 #     # Get user input
