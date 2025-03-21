@@ -14,7 +14,7 @@ from psycopg import Connection
 from psycopg2 import connect
 import psycopg
 from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
-#import chainlit as cl
+import chainlit as cl
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, AIMessageChunk
 
 try:
@@ -181,27 +181,48 @@ supervisor = create_supervisor(
 
 # Compile and run the workflow
 graph = supervisor.compile(checkpointer=checkpointer)
-ensure_connection(checkpointer)  # Ensure the connection is active
+#ensure_connection(checkpointer)  # Ensure the connection is active
 config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
 
-while True:
-    # Get user input
-    try:
-        user_input = input("User: ")
-        if user_input.lower() in ["quit", "exit", "q"]:
-            print("Goodbye!")
-            break
-        inputs = {"messages": [{"role": "user", "content": user_input}]}
-        results = graph.stream(input=inputs, config=config, stream_mode="values")
-        for result in results:
-            print("Assistant:", result["messages"][-1].pretty_print())
-    except:
-        # fallback if input() is not available
-        user_input = "What do you know about LangGraph?"
-        print("User: " + user_input)
-        inputs = {"messages": [{"role": "user", "content": user_input}]}
-        results = graph.stream(input=inputs, config=config, stream_mode="values")
-        for result in results:
-            print("Assistant:", result["messages"][-1].pretty_print())
-        break
+@cl.on_chat_resume
+async def on_chat_resume(thread):
+    pass
+
+@cl.on_message
+async def main(message: cl.Message):
+    ensure_connection(checkpointer)  # Ensure the connection is active
+    answer = cl.Message(content="")
+    await answer.send()
+
+    config = {"configurable": {"thread_id": "1", "user_id": "charles.chinny@lg.com"}}
+
+    for msg, _ in graph.stream(
+        {"messages": [HumanMessage(content=message.content)]},
+        config,
+        stream_mode="messages",
+    ):
+        if isinstance(msg, AIMessageChunk):
+            answer.content += msg.content  # type: ignore
+            await answer.update()
+
+# while True:
+#     # Get user input
+#     try:
+#         user_input = input("User: ")
+#         if user_input.lower() in ["quit", "exit", "q"]:
+#             print("Goodbye!")
+#             break
+#         inputs = {"messages": [{"role": "user", "content": user_input}]}
+#         results = graph.stream(input=inputs, config=config, stream_mode="values")
+#         for result in results:
+#             print("Assistant:", result["messages"][-1].pretty_print())
+#     except:
+#         # fallback if input() is not available
+#         user_input = "What do you know about LangGraph?"
+#         print("User: " + user_input)
+#         inputs = {"messages": [{"role": "user", "content": user_input}]}
+#         results = graph.stream(input=inputs, config=config, stream_mode="values")
+#         for result in results:
+#             print("Assistant:", result["messages"][-1].pretty_print())
+#         break
 
