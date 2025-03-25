@@ -18,17 +18,7 @@ import chainlit as cl
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, AIMessageChunk
 
 
-
-try:
-    keyVaultName = os.environ["KEY_VAULT_NAME"]
-except KeyError:
-    # Get input from user if not set
-    keyVaultName = input("Please enter your Key Vault name: ")
-    # Save for future cells in this session
-    os.environ["KEY_VAULT_NAME"] = keyVaultName
-
-
-keyVaultName = "akv-searchindex-llm"
+keyVaultName = "akvlab00"
 KVUri = f"https://{keyVaultName}.vault.azure.net"
 
 credential = DefaultAzureCredential()
@@ -54,7 +44,8 @@ from azure.search.documents.models import (
 
 search_credential =AzureKeyCredential(client.get_secret(name="aisearch-key").value)
 search_endpoint =client.get_secret(name="aisearch-endpoint").value
-index_name = "json-glossary-index"
+source = 'json'
+index_name = f"{source}-glossary-index"
 
 
 def search_retrieval(user_input: str) -> list:
@@ -108,13 +99,6 @@ model = AzureChatOpenAI(
     temperature=0.5
 )
 
-# from langchain.tools import Tool
-# search_retrieval_tool = Tool(
-#     name="AzureSearch",
-#     func=search_retrieval,
-#     description="Strictly retrieves data from Azure AI Search Index ."
-# )
-
 
 research_graph = create_react_agent(
     model=model,
@@ -126,8 +110,7 @@ research_graph = create_react_agent(
 
 
 context = "You are a Supervisor Agent. Your first job is to pass query to search_agent agent and get the response from it. Do not get the response from any other agent"
-# context = "I have the following statements that I need to verify by doing and internet search:"
-instructions = "Do not paraphrase the content. ONly share the reslts from search_agent. Do not provide any response from create_supervisor agent"
+instructions = "Do not paraphrase the content. Only share the results from search_agent. Do not provide any response from create_supervisor agent"
 
 prompt_re = f"{context} {instructions}"
 print(prompt_re)
@@ -137,19 +120,7 @@ workflow = create_supervisor(
     [research_graph],  # Only this agent is in charge
     model=model,
     prompt=prompt_re
-    # (
-    #     f""" You are a Supervisor Agent. Your first job is to pass query to research_graph agent and get the response from it. Do not get the response from any other agent.
-    #     In your first line mention from where this response is being generated.
-    #       Mention that this response is from Azure Index, if it is retrieved from Azure Search Index else mention that it is from Internet and mention the source.
-    #     If the index does not contain the relevant information, indicate that you are unable to provide an answer and ask user to Search again. 
-    #     Absolutely no external searches or sources are allowed
-    #     Do not paraphrase the index content.
-    #     If the results are returned by the search expert then do not show your results"""
-    # )
 )
-
-   # Please force your response to be based exclusively on the provided index. Do not search online or access any external sources. 
-        # You are restricted to using only the content in the index for answering the question. 
 
 app = workflow.compile()
 import asyncio
