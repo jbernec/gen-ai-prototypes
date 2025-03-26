@@ -22,3 +22,4 @@ psycopg2==2.9.10
 psycopg==3.2.6
 azure-mgmt-postgresqlflexibleservers==1.0.0
 chainlit==2.4.1
+langmem==0.0.17
