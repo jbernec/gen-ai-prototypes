@@ -140,8 +140,7 @@ async def on_message(msg: cl.Message):
     final_answer = cl.Message(content="")
     for m in result["messages"]:
         if isinstance(m, AIMessage):
-            await final_answer.stream_token(f"🔨 {m.content}")
-            # await 
+            await final_answer.stream_token(f"🔨 {m.content}") 
         elif isinstance(m, ToolMessage):
             await final_answer.stream_token(f"🤖 {m.content}")
  
