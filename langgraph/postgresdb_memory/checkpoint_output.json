@@ -1,0 +1,158 @@
+checkpoint_config = ["{'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1f00a627-d3b1-65d7-8008-fbc3f86bfe34'
+}
+}, checkpoint={'v': 1, 'id': '1f00a627-d3b1-65d7-8008-fbc3f86bfe34', 'ts': '2025-03-26T16: 50: 57.258235+00: 00', 'pending_sends': [], 'versions_seen': {'agent': {'tools': '00000000000000000000000000000009.0.006030628872401356', 'start:agent': '00000000000000000000000000000007.0.8811671368719413'
+    }, 'tools': {'branch:agent:should_continue:tools': '00000000000000000000000000000008.0.7973318487229677'
+    }, '__input__': {}, '__start__': {'__start__': '00000000000000000000000000000006.0.22960680286825585'
+    }
+}, 'channel_versions': {'agent': '00000000000000000000000000000010.0.530459196440756', 'tools': '00000000000000000000000000000010.0.047454089953844925', 'messages': '00000000000000000000000000000010.0.8364601260221023', '__start__': '00000000000000000000000000000007.0.05865162030414839', 'start:agent': '00000000000000000000000000000008.0.69491937116169', 'branch:agent:should_continue:tools': '00000000000000000000000000000009.0.23758341220227297'
+}, 'channel_values': {'agent': 'agent', 'messages': [HumanMessage(content='what can you tell me about UI?', additional_kwargs={}, response_metadata={}, id='17b0c135-8a10-4fe4-bef2-78187fabeb39'), AIMessage(content='', additional_kwargs={'tool_calls': [
+                {'id': 'call_M6WN6wLckBbWA91kocFhNXFl', 'function': {'arguments': '{
+                            "user_input": "UI"
+                        }', 'name': 'search_retrieval'
+                    }, 'type': 'function'
+                }
+            ], 'refusal': None
+        }, response_metadata={'token_usage': {'completion_tokens': 18, 'prompt_tokens': 375, 'total_tokens': 393, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0
+                }, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0
+                }
+            }, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_ded0d14823', 'prompt_filter_results': [
+                {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                        }, 'jailbreak': {'filtered': False, 'detected': False
+                        }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                        }, 'sexual': {'filtered': False, 'severity': 'safe'
+                        }, 'violence': {'filtered': False, 'severity': 'safe'
+                        }
+                    }
+                }
+            ], 'finish_reason': 'tool_calls', 'logprobs': None, 'content_filter_results': {}
+        }, name='search_expert', id='run-43a18492-652c-4d8a-8e51-83e431a6e838-0', tool_calls=[
+            {'name': 'search_retrieval', 'args': {'user_input': 'UI'
+                }, 'id': 'call_M6WN6wLckBbWA91kocFhNXFl', 'type': 'tool_call'
+            }
+        ], usage_metadata={'input_tokens': 375, 'output_tokens': 18, 'total_tokens': 393, 'input_token_details': {'audio': 0, 'cache_read': 0
+            }, 'output_token_details': {'audio': 0, 'reasoning': 0
+            }
+        }), ToolMessage(content='[
+            {\'incorrectTerm\': \'User Interfce\', \'context\': \'A well-designed UI is crucial for effective human-computer interaction.\', \'definition\': \'The User Interface (UI) is the space where interactions between humans and machines occur.\', \'note\': \'Good UI design enhances overall user experience.\', \'@search.score\': 0.03333333507180214, \'@search.reranker_score\': 3.1016900539398193, \'@search.highlights\': None, \'@search.captions\': [<azure.search.documents._generated.models._models_py3.QueryCaptionResult object at 0x0000015E2D3EAC50>
+                ], \'@search.document_debug_info\': None
+            },
+            {\'incorrectTerm\': \'User Experence\', \'context\': \'UX is critical in product design and service delivery.\', \'definition\': "User Experience (UX) refers to a person\'s emotions and attitudes about using a particular product, system or service.", \'note\': \'Focusing on UX can significantly improve customer satisfaction.\', \'@search.score\': 0.016393441706895828, \'@search.reranker_score\': 1.7334392070770264, \'@search.highlights\': None, \'@search.captions\': [<azure.search.documents._generated.models._models_py3.QueryCaptionResult object at 0x0000015E2D41D250>
+                ], \'@search.document_debug_info\': None
+            }
+        ]', name='search_retrieval', id='f88b6061-abfe-43fe-beb5-0024243c1193', tool_call_id='call_M6WN6wLckBbWA91kocFhNXFl'), AIMessage(content="Here are two responses about UI:\n\n1. **User Interface (UI)**:\n   - **Definition**: The User Interface (UI) is the space where interactions between humans and machines occur.\n   - **Context**: A well-designed UI is crucial for effective human-computer interaction.\n   - **Note**: Good UI design enhances overall user experience.\n   - **Score**: 0.03333333507180214\n   - **Reranker Score**: 3.1016900539398193\n\n2. **User Experience (UX)** (related to UI):\n   - **Definition**: User Experience (UX) refers to a person's emotions and attitudes about using a particular product, system, or service.\n   - **Context**: UX is critical in product design and service delivery.\n   - **Note**: Focusing on UX can significantly improve customer satisfaction.\n   - **Score**: 0.016393441706895828\n   - **Reranker Score**: 1.7334392070770264\n\nComparing these, the response about User Interface (UI) has a Reranker Score > 3.0, which indicates it is more relevant.", additional_kwargs={'refusal': None
+        }, response_metadata={'token_usage': {'completion_tokens': 249, 'prompt_tokens': 697, 'total_tokens': 946, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0
+                }, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0
+                }
+            }, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_ded0d14823', 'prompt_filter_results': [
+                {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                        }, 'jailbreak': {'filtered': False, 'detected': False
+                        }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                        }, 'sexual': {'filtered': False, 'severity': 'safe'
+                        }, 'violence': {'filtered': False, 'severity': 'safe'
+                        }
+                    }
+                }
+            ], 'finish_reason': 'stop', 'logprobs': None, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                }, 'protected_material_code': {'filtered': False, 'detected': False
+                }, 'protected_material_text': {'filtered': False, 'detected': False
+                }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                }, 'sexual': {'filtered': False, 'severity': 'safe'
+                }, 'violence': {'filtered': False, 'severity': 'safe'
+                }
+            }
+        }, name='search_expert', id='run-fe6ad177-3179-4922-ade0-b7c2fb4b2ffa-0', usage_metadata={'input_tokens': 697, 'output_tokens': 249, 'total_tokens': 946, 'input_token_details': {'audio': 0, 'cache_read': 0
+            }, 'output_token_details': {'audio': 0, 'reasoning': 0
+            }
+        }), HumanMessage(content='tell me about RAM?', additional_kwargs={}, response_metadata={}, id='e8fa59f4-f6cf-4c1f-b935-66f089f8f43b'), AIMessage(content='', additional_kwargs={'tool_calls': [
+                {'id': 'call_xOuabwe1NEnXKxxQP77g0Yzp', 'function': {'arguments': '{
+                            "user_input": "RAM"
+                        }', 'name': 'search_retrieval'
+                    }, 'type': 'function'
+                }
+            ], 'refusal': None
+        }, response_metadata={'token_usage': {'completion_tokens': 18, 'prompt_tokens': 961, 'total_tokens': 979, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0
+                }, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0
+                }
+            }, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_ded0d14823', 'prompt_filter_results': [
+                {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                        }, 'jailbreak': {'filtered': False, 'detected': False
+                        }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                        }, 'sexual': {'filtered': False, 'severity': 'safe'
+                        }, 'violence': {'filtered': False, 'severity': 'safe'
+                        }
+                    }
+                }
+            ], 'finish_reason': 'tool_calls', 'logprobs': None, 'content_filter_results': {}
+        }, name='search_expert', id='run-15125ce8-508b-4a83-acdf-a69dd7d5875c-0', tool_calls=[
+            {'name': 'search_retrieval', 'args': {'user_input': 'RAM'
+                }, 'id': 'call_xOuabwe1NEnXKxxQP77g0Yzp', 'type': 'tool_call'
+            }
+        ], usage_metadata={'input_tokens': 961, 'output_tokens': 18, 'total_tokens': 979, 'input_token_details': {'audio': 0, 'cache_read': 0
+            }, 'output_token_details': {'audio': 0, 'reasoning': 0
+            }
+        }), ToolMessage(content='[
+            {\'incorrectTerm\': \'Read Access Memory\', \'context\': \'RAM is used in computers and other devices to store data that is being used actively.\', \'definition\': \'Random Access Memory (RAM) is a form of computer memory that can be read and changed in any order, typically used to store working data and machine code. A random-access memory device allows data items to be read or written in almost the same amount of time irrespective of the physical location of data inside the memory.\', \'note\': \'RAM is volatile memory, meaning it loses its data when the power is turned off.\', \'@search.score\': 0.03333333507180214, \'@search.reranker_score\': 3.0400123596191406, \'@search.highlights\': None, \'@search.captions\': [<azure.search.documents._generated.models._models_py3.QueryCaptionResult object at 0x0000015E2D3133D0>
+                ], \'@search.document_debug_info\': None
+            },
+            {\'incorrectTerm\': \'Central Processor Unit\', \'context\': "CPUs are the primary component of computers responsible for interpreting and executing most of the commands from the computer\'s other hardware and software.", \'definition\': \'The central processing unit (CPU) is the electronic circuitry within a computer that executes instructions that make up a computer program. The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.\', \'note\': \'CPUs are often referred to as the "brains" of the computer.\', \'@search.score\': 0.016393441706895828, \'@search.reranker_score\': 1.0727087259292603, \'@search.highlights\': None, \'@search.captions\': [<azure.search.documents._generated.models._models_py3.QueryCaptionResult object at 0x0000015E2D313DD0>
+                ], \'@search.document_debug_info\': None
+            }
+        ]', name='search_retrieval', id='de2836cb-7cf3-49bd-8852-f8ce60d5340e', tool_call_id='call_xOuabwe1NEnXKxxQP77g0Yzp'), AIMessage(content='Here are two responses about RAM:\n\n1. **Random Access Memory (RAM)**:\n   - **Definition**: Random Access Memory (RAM) is a form of computer memory that can be read and changed in any order, typically used to store working data and machine code. A random-access memory device allows data items to be read or written in almost the same amount of time irrespective of the physical location of data inside the memory.\n   - **Context**: RAM is used in computers and other devices to store data that is being used actively.\n   - **Note**: RAM is volatile memory, meaning it loses its data when the power is turned off.\n   - **Score**: 0.03333333507180214\n   - **Reranker Score**: 3.0400123596191406\n\n2. **Central Processing Unit (CPU)** (related to RAM):\n   - **Definition**: The central processing unit (CPU) is the electronic circuitry within a computer that executes instructions that make up a computer program. The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.\n   - **Context**: CPUs are the primary component of computers responsible for interpreting and executing most of the commands from the computer\'s other hardware and software.\n   - **Note**: CPUs are often referred to as the "brains" of the computer.\n   - **Score**: 0.016393441706895828\n   - **Reranker Score**: 1.0727087259292603\n\nComparing these, the response about Random Access Memory (RAM) has a Reranker Score > 3.0, which indicates it is more relevant.', additional_kwargs={'refusal': None
+        }, response_metadata={'token_usage': {'completion_tokens': 357, 'prompt_tokens': 1390, 'total_tokens': 1747, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0
+                }, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0
+                }
+            }, 'model_name': 'gpt-4o-2024-08-06', 'system_fingerprint': 'fp_ded0d14823', 'prompt_filter_results': [
+                {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                        }, 'jailbreak': {'filtered': False, 'detected': False
+                        }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                        }, 'sexual': {'filtered': False, 'severity': 'safe'
+                        }, 'violence': {'filtered': False, 'severity': 'safe'
+                        }
+                    }
+                }
+            ], 'finish_reason': 'stop', 'logprobs': None, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                }, 'protected_material_code': {'filtered': False, 'detected': False
+                }, 'protected_material_text': {'filtered': False, 'detected': False
+                }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                }, 'sexual': {'filtered': False, 'severity': 'safe'
+                }, 'violence': {'filtered': False, 'severity': 'safe'
+                }
+            }
+        }, name='search_expert', id='run-1f56d12b-80ce-4f9d-bf20-1af6f7178012-0', usage_metadata={'input_tokens': 1390, 'output_tokens': 357, 'total_tokens': 1747, 'input_token_details': {'audio': 0, 'cache_read': 0
+            }, 'output_token_details': {'audio': 0, 'reasoning': 0
+            }
+        })
+    ]
+}
+}, metadata={'step': 8, 'source': 'loop', 'writes': {'agent': {'messages': [AIMessage(content='Here are two responses about RAM:\n\n1. **Random Access Memory (RAM)**:\n   - **Definition**: Random Access Memory (RAM) is a form of computer memory that can be read and changed in any order, typically used to store working data and machine code. A random-access memory device allows data items to be read or written in almost the same amount of time irrespective of the physical location of data inside the memory.\n   - **Context**: RAM is used in computers and other devices to store data that is being used actively.\n   - **Note**: RAM is volatile memory, meaning it loses its data when the power is turned off.\n   - **Score**: 0.03333333507180214\n   - **Reranker Score**: 3.0400123596191406\n\n2. **Central Processing Unit (CPU)** (related to RAM):\n   - **Definition**: The central processing unit (CPU) is the electronic circuitry within a computer that executes instructions that make up a computer program. The CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.\n   - **Context**: CPUs are the primary component of computers responsible for interpreting and executing most of the commands from the computer\'s other hardware and software.\n   - **Note**: CPUs are often referred to as the "brains" of the computer.\n   - **Score**: 0.016393441706895828\n   - **Reranker Score**: 1.0727087259292603\n\nComparing these, the response about Random Access Memory (RAM) has a Reranker Score > 3.0, which indicates it is more relevant.', additional_kwargs={'refusal': None
+            }, response_metadata={'logprobs': None, 'model_name': 'gpt-4o-2024-08-06', 'token_usage': {'total_tokens': 1747, 'prompt_tokens': 1390, 'completion_tokens': 357, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0
+                    }, 'completion_tokens_details': {'audio_tokens': 0, 'reasoning_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0
+                    }
+                }, 'finish_reason': 'stop', 'system_fingerprint': 'fp_ded0d14823', 'prompt_filter_results': [
+                    {'prompt_index': 0, 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                            }, 'sexual': {'filtered': False, 'severity': 'safe'
+                            }, 'violence': {'filtered': False, 'severity': 'safe'
+                            }, 'jailbreak': {'detected': False, 'filtered': False
+                            }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                            }
+                        }
+                    }
+                ], 'content_filter_results': {'hate': {'filtered': False, 'severity': 'safe'
+                    }, 'sexual': {'filtered': False, 'severity': 'safe'
+                    }, 'violence': {'filtered': False, 'severity': 'safe'
+                    }, 'self_harm': {'filtered': False, 'severity': 'safe'
+                    }, 'protected_material_code': {'detected': False, 'filtered': False
+                    }, 'protected_material_text': {'detected': False, 'filtered': False
+                    }
+                }
+            }, name='search_expert', id='run-1f56d12b-80ce-4f9d-bf20-1af6f7178012-0', usage_metadata={'input_tokens': 1390, 'output_tokens': 357, 'total_tokens': 1747, 'input_token_details': {'audio': 0, 'cache_read': 0
+                }, 'output_token_details': {'audio': 0, 'reasoning': 0
+                }
+            })
+        ]
+    }
+}, 'parents': {}, 'user_id': 'charles.chinny@lg.com', 'thread_id': '1'
+}, parent_config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1f00a627-5dfe-6dfd-8007-03ebef8dd446'
+}
+}, pending_writes=[]"
+]
