@@ -1,0 +1,11 @@
+{
+    "Name": "Azure Cosmos DB Control Plane Owner",
+    "IsCustom": true,
+    "Description": "Can perform all control plane actions for an Azure Cosmos DB account.",
+    "Actions": [
+      "Microsoft.DocumentDb/*"
+    ],
+    "AssignableScopes": [
+      "/subscriptions/29321427-bee7-4513-995c-0e3b141b2c0e/resourceGroups/rgailab"
+    ]
+  }

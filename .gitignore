@@ -2,3 +2,7 @@
 .databricks/
 .files/
 .chainlit/
+langgraph/cosmosdb_memory/mycreds-rbac.donotgit.sh
+
+# Add __pycache__ to .gitignore
+__pycache__/
