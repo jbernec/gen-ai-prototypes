@@ -97,7 +97,8 @@ model = AzureChatOpenAI(
     api_key=azure_openai_api_key, 
     api_version=azure_openai_api_version, 
     azure_endpoint=azure_openai_endpoint,
-    temperature=0.5
+    temperature=0.5,
+    streaming=True
 )
 
 
