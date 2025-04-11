@@ -10,6 +10,7 @@ from azure.search.documents.indexes.models import (
     IndexingParameters,
     IndexingParametersConfiguration
 )
+from azure.core.credentials import AzureKeyCredential
 
 # Initialize Key Vault client
 KEY_VAULT_NAME = "akvlab00"  # Replace with your Key Vault name
@@ -38,6 +39,9 @@ INDEX_NAME = "json-terminology-index"
 
 # Add indexer name derived from index name
 INDEXER_NAME = f"{INDEX_NAME}-indexer"
+
+# Define the search credential using the SEARCH_KEY
+search_credential = AzureKeyCredential(SEARCH_KEY)
 
 # Search index fields
 FIELDS = [
