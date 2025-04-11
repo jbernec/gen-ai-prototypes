@@ -11,8 +11,10 @@ from azure.search.documents.indexes.models import (
     IndexingParametersConfiguration
 )
 from azure.core.credentials import AzureKeyCredential
+import os
 
 # Initialize Key Vault client
+keyVaultName = os.environ["KEY_VAULT_NAME"]
 KEY_VAULT_NAME = "akvlab00"  # Replace with your Key Vault name
 key_vault_client = get_key_vault_client(KEY_VAULT_NAME)
 

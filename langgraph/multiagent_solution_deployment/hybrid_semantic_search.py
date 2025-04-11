@@ -6,7 +6,7 @@ from azure.search.documents.models import (
     VectorizableTextQuery
 )
 from azure.core.credentials import AzureKeyCredential
-from config import SEARCH_KEY, search_credential
+from config import SEARCH_KEY, search_credential, SEARCH_ENDPOINT
 
 def custom_hybrid_semantic_search(search_endpoint, index_name, search_credential, query, vector_field="text_vector", top_k=3):
     """
@@ -73,8 +73,8 @@ def custom_hybrid_semantic_search(search_endpoint, index_name, search_credential
 
 if __name__ == "__main__":
     # Define required parameters
-    search_endpoint = "https://aisearchlab00.search.windows.net"  # Replace with your Azure Search endpoint
-    index_name = "json-glossary-index"  # Replace with your index name
+    search_endpoint = SEARCH_ENDPOINT  # Replace with your Azure Search endpoint
+    index_name = "json-terminology-index"  # Replace with your index name
     query = "What is Agile?"  # Replace with your search query
 
     # Execute the custom hybrid semantic search function
