@@ -1,4 +1,4 @@
-from langgraph.multiagent_solution.config import *
+from config import *
 from utils import (
     get_key_vault_client,
     create_data_source,
@@ -7,11 +7,13 @@ from utils import (
     create_indexer
 )
 from azure.search.documents.indexes import SearchIndexerClient
+from azure.search.documents.indexes import SearchIndexClient
 from azure.core.credentials import AzureKeyCredential
 
 # Initialize clients
 key_vault_client = get_key_vault_client(KEY_VAULT_NAME)
 indexer_client = SearchIndexerClient(endpoint=SEARCH_ENDPOINT, credential=AzureKeyCredential(SEARCH_KEY))
+index_client = SearchIndexClient(endpoint=SEARCH_ENDPOINT, credential=AzureKeyCredential(SEARCH_KEY))
 
 # Create data source
 data_source = create_data_source(
@@ -24,13 +26,16 @@ print(f"Data source created: {data_source.name}")
 
 # Create search index
 search_index = create_search_index(
-    index_client=indexer_client,
+    index_client=index_client,
     index_name=INDEX_NAME,
     azure_openai_vector_dimension=AZURE_OPENAI_VECTOR_DIMENSION,
     fields=FIELDS,
     vector_search=VECTOR_SEARCH,
     scoring_profiles=[],
-    semantic_search=semantic_search
+    semantic_search=semantic_search,
+    azure_openai_endpoint=AZURE_OPENAI_ENDPOINT,
+    azure_openai_embedding_deployment=AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
+    azure_openai_embedding_model=AZURE_OPENAI_EMBEDDING_MODEL
 )
 print(f"Search index created: {search_index.name}")
 
@@ -42,8 +47,9 @@ skillset = create_skillset(
     azure_openai_embedding_model=AZURE_OPENAI_EMBEDDING_MODEL,
     azure_openai_vector_dimension=AZURE_OPENAI_VECTOR_DIMENSION,
     azure_openai_api_key=AZURE_OPENAI_API_KEY,
-    azure_ai_services_key=SEARCH_KEY,
-    azure_ai_services_endpoint=SEARCH_ENDPOINT
+    azure_ai_services_key=AZURE_AI_SERVICES_KEY,
+    azure_ai_services_endpoint=AZURE_AI_SERVICES_ENDPOINT,
+    index_name=INDEX_NAME
 )
 indexer_client.create_or_update_skillset(skillset)
 print(f"Skillset created: {skillset.name}")

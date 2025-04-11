@@ -24,6 +24,10 @@ DATA_SOURCE_CONNECTION_NAME = "json-glossary-ds"
 # Retrieve additional secrets from Key Vault
 RESOURCE_ID = key_vault_client.get_secret("ds-resource-id").value
 
+# Azure AI Services Configuration
+AZURE_AI_SERVICES_KEY = key_vault_client.get_secret(name="azure-ai-services-key").value
+AZURE_AI_SERVICES_ENDPOINT = key_vault_client.get_secret(name="azure-ai-services-endpoint").value
+
 # Static configurations
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "text-embedding-3-small"
 AZURE_OPENAI_VECTOR_DIMENSION = 1536

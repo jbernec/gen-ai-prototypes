@@ -48,25 +48,26 @@ def create_data_source(indexer_client, blob_container_name, resource_id, data_so
     )
     return indexer_client.create_or_update_data_source_connection(data_source_connection=data_source_connection)
 
-def create_search_index(index_client, index_name, azure_openai_vector_dimension, fields, scoring_profiles, azure_openai_endpoint, azure_openai_embedding_deployment, azure_openai_embedding_model, semantic_search):
+def create_search_index(index_client, index_name, azure_openai_vector_dimension, fields, scoring_profiles, azure_openai_endpoint, azure_openai_embedding_deployment, azure_openai_embedding_model, semantic_search, vector_search=None):
     """Create Azure AI Search index with additional configurations."""
-    vector_search = VectorSearch(
-        algorithms=[HnswAlgorithmConfiguration(name="myHnsw")],
-        profiles=[VectorSearchProfile(
-            name="myHnswProfile",
-            algorithm_configuration_name="myHnsw",
-            vectorizer_name="myOpenAI"
-        )],
-        vectorizers=[AzureOpenAIVectorizer(
-            vectorizer_name="myOpenAI",
-            kind="azureOpenAI",
-            parameters=AzureOpenAIVectorizerParameters(
-                resource_url=azure_openai_endpoint,
-                deployment_name=azure_openai_embedding_deployment,
-                model_name=azure_openai_embedding_model
-            )
-        )]
-    )
+    if vector_search is None:
+        vector_search = VectorSearch(
+            algorithms=[HnswAlgorithmConfiguration(name="myHnsw")],
+            profiles=[VectorSearchProfile(
+                name="myHnswProfile",
+                algorithm_configuration_name="myHnsw",
+                vectorizer_name="myOpenAI"
+            )],
+            vectorizers=[AzureOpenAIVectorizer(
+                vectorizer_name="myOpenAI",
+                kind="azureOpenAI",
+                parameters=AzureOpenAIVectorizerParameters(
+                    resource_url=azure_openai_endpoint,
+                    deployment_name=azure_openai_embedding_deployment,
+                    model_name=azure_openai_embedding_model
+                )
+            )]
+        )
 
     index = SearchIndex(
         name=index_name,
@@ -77,7 +78,7 @@ def create_search_index(index_client, index_name, azure_openai_vector_dimension,
     )
     return index_client.create_or_update_index(index=index)
 
-def create_skillset(skillset_name, azure_openai_endpoint, azure_openai_embedding_deployment, azure_openai_embedding_model, azure_openai_vector_dimension, azure_openai_api_key, azure_ai_services_key, azure_ai_services_endpoint):
+def create_skillset(skillset_name, azure_openai_endpoint, azure_openai_embedding_deployment, azure_openai_embedding_model, azure_openai_vector_dimension, azure_openai_api_key, azure_ai_services_key, azure_ai_services_endpoint, index_name):
     """Create skillset for Azure AI Search with additional configurations."""
     split_skill = SplitSkill(
         description="Split skill to chunk documents",
@@ -102,11 +103,43 @@ def create_skillset(skillset_name, azure_openai_endpoint, azure_openai_embedding
         inputs=[InputFieldMappingEntry(name="text", source="/document/pages/*")],
         outputs=[OutputFieldMappingEntry(name="embedding", target_name="text_vector")]
     )
+
+    index_projections = SearchIndexerIndexProjection(
+        selectors=[
+            SearchIndexerIndexProjectionSelector(
+                target_index_name=index_name,
+                parent_key_field_name="parent_id",
+                source_context="/document/pages/*",
+                mappings=[
+                    InputFieldMappingEntry(name="text_vector", source="/document/pages/*/text_vector"),
+                    InputFieldMappingEntry(name="chunk", source="/document/pages/*"),
+                    InputFieldMappingEntry(name="title", source="/document/title"),
+                    InputFieldMappingEntry(name="gender", source="/document/gender"),
+                    InputFieldMappingEntry(name="definition", source="/document/definition"),
+                    InputFieldMappingEntry(name="incorrectTerm", source="/document/incorrectTerm"),
+                    InputFieldMappingEntry(name="domain", source="/document/domain"),
+                    InputFieldMappingEntry(name="englishTerm", source="/document/englishTerm"),
+                    InputFieldMappingEntry(name="creationDate", source="/document/creationDate"),
+                    InputFieldMappingEntry(name="modificationDate", source="/document/modificationDate"),
+                    InputFieldMappingEntry(name="source", source="/document/source"),
+                    InputFieldMappingEntry(name="link", source="/document/link"),
+                    InputFieldMappingEntry(name="context", source="/document/context"),
+                    InputFieldMappingEntry(name="note", source="/document/note"),
+                ]
+            )
+        ],
+        parameters=SearchIndexerIndexProjectionsParameters(
+            projection_mode=IndexProjectionMode.SKIP_INDEXING_PARENT_DOCUMENTS
+        )
+    )
+
     skills = [split_skill, embedding_skill]
+
     return SearchIndexerSkillset(
         name=skillset_name,
         description="Skillset to chunk documents and generate embeddings",
         skills=skills,
+        index_projection=index_projections,
         cognitive_services_account=AIServicesAccountKey(key=azure_ai_services_key, subdomain_url=azure_ai_services_endpoint)
     )
 
