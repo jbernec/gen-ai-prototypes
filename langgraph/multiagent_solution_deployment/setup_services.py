@@ -62,6 +62,6 @@ indexer = create_indexer(
     skillset_name=skillset.name,
     index_name=INDEX_NAME,
     data_source_name=data_source.name,
-    index_parameters={}
+    index_parameters=INDEX_PARAMETERS
 )
 print(f"Indexer created: {indexer.name}")

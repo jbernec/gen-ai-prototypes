@@ -6,7 +6,9 @@ from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
     VectorSearchProfile,
     AzureOpenAIVectorizer,
-    AzureOpenAIVectorizerParameters
+    AzureOpenAIVectorizerParameters,
+    IndexingParameters,
+    IndexingParametersConfiguration
 )
 
 # Initialize Key Vault client
@@ -19,7 +21,7 @@ AZURE_OPENAI_API_KEY = key_vault_client.get_secret("aoai-api-key").value
 AZURE_OPENAI_EMBEDDING_MODEL = key_vault_client.get_secret("aoai-embedding-model").value
 SEARCH_ENDPOINT = key_vault_client.get_secret("aisearch-endpoint").value
 SEARCH_KEY = key_vault_client.get_secret("aisearch-key").value
-DATA_SOURCE_CONNECTION_NAME = "json-glossary-ds"
+DATA_SOURCE_CONNECTION_NAME = "json-terminology-ds"
 
 # Retrieve additional secrets from Key Vault
 RESOURCE_ID = key_vault_client.get_secret("ds-resource-id").value
@@ -32,7 +34,7 @@ AZURE_AI_SERVICES_ENDPOINT = key_vault_client.get_secret(name="azure-ai-services
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "text-embedding-3-small"
 AZURE_OPENAI_VECTOR_DIMENSION = 1536
 BLOB_CONTAINER_NAME = "json-data"
-INDEX_NAME = "json-terminology-agent-index"
+INDEX_NAME = "json-terminology-index"
 
 # Add indexer name derived from index name
 INDEXER_NAME = f"{INDEX_NAME}-indexer"
@@ -98,3 +100,13 @@ SEMANTIC_CONFIGURATION = SemanticConfiguration(
 
 # Create the semantic search config
 semantic_search = SemanticSearch(configurations=[SEMANTIC_CONFIGURATION])
+
+# Indexing Parameters Configuration
+INDEX_PARAMETERS = IndexingParameters(
+    configuration=IndexingParametersConfiguration(
+        data_to_extract="contentAndMetadata",  # Extract both content and metadata
+        parsing_mode="jsonArray",  # Parsing mode for JSON array
+        document_root="terms/term",  # Root path for documents
+        query_timeout=None  # No timeout for queries
+    )
+)
